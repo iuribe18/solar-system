@@ -5,7 +5,7 @@ pipeline {
     NAME = "solar-system-9"
     VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
     IMAGE_REPO = "solar-system"
-    IMAGE_REGISTRY = "docker-registry"
+    IMAGE_REGISTRY = "docker-registry:5000"
     ARGOCD_TOKEN = credentials('argocd-cred')
     GITEA_TOKEN = credentials('gitea-cred')
   }
@@ -27,9 +27,7 @@ pipeline {
 
     stage('Push Image') {
       steps {
-        withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
           sh 'docker push ${IMAGE_REGISTRY}/${IMAGE_REPO}/${NAME}:${VERSION}'
-        }
       }
     }
 
