@@ -2,9 +2,10 @@ pipeline {
   agent any
 
   environment {
-    NAME = "solar-system"
+    NAME = "solar-system-9"
     VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
-    IMAGE_REPO = "siddharth67"
+    IMAGE_REPO = "solar-system"
+    IMAGE_REGISTRY = "docker-registry"
     ARGOCD_TOKEN = credentials('argocd-token')
     GITEA_TOKEN = credentials('gitea-token')
   }
@@ -20,14 +21,14 @@ pipeline {
     stage('Build Image') {
       steps {
             sh "docker build -t ${NAME} ."
-            sh "docker tag ${NAME}:latest ${IMAGE_REPO}/${NAME}:${VERSION}"
+            sh "docker tag ${NAME}:latest ${IMAGE_REGISTRY}/${IMAGE_REPO}/${NAME}:${VERSION}"
         }
       }
 
     stage('Push Image') {
       steps {
         withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
-          sh 'docker push ${IMAGE_REPO}/${NAME}:${VERSION}'
+          sh 'docker push ${IMAGE_REGISTRY}/${IMAGE_REPO}/${NAME}:${VERSION}'
         }
       }
     }
@@ -45,7 +46,7 @@ pipeline {
 
           } else {
             echo 'Repo does not exists - Cloning the repo'
-            sh 'git clone -b feature-gitea http://139.59.21.103:3000/siddharth/gitops-argocd'
+            sh 'git clone -b feature-gitea http://controlplane:3000/bob/gitops-argocd'
           }
         }
       }
@@ -54,7 +55,7 @@ pipeline {
     stage('Update Manifest') {
       steps {
         dir("gitops-argocd/jenkins-demo") {
-          sh 'sed -i "s#siddharth67.*#${IMAGE_REPO}/${NAME}:${VERSION}#g" deployment.yaml'
+          sh 'sed -i "s#siddharth67.*#${IMAGE_REGISTRY}/${IMAGE_REPO}/${NAME}:${VERSION}#g" deployment.yaml'
           sh 'cat deployment.yaml'
         }
       }
@@ -64,7 +65,7 @@ pipeline {
       steps {
         dir("gitops-argocd/jenkins-demo") {
           sh "git config --global user.email 'jenkins@ci.com'"
-          sh 'git remote set-url origin http://$GITEA_TOKEN@139.59.21.103:3000/siddharth/gitops-argocd'
+          sh 'git remote set-url origin http://$GITEA_TOKEN@controlplane:3000/bob/gitops-argocd'
           sh 'git checkout feature-gitea'
           sh 'git add -A'
           sh 'git commit -am "Updated image version for Build - $VERSION"'
