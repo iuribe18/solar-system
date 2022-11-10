@@ -1,16 +1,15 @@
 echo "Opening a Pull Request"
 
-curl -X 'POST' \
-  'http://139.59.21.103:3000/api/v1/repos/siddharth/gitops-argocd/pulls' \
+curl -u bob:bob@123 -X 'POST' \
+  'http://controlplane:3000/api/v1/repos/bob/gitops-argocd/pulls' \
   -H 'accept: application/json' \
-  -H "authorization: $ARGOCD_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{
-  "assignee": "siddharth",
+  "assignee": "bob",
   "assignees": [
-    "siddharth"
+    "bob"
   ],
-  "base": "main",
+  "base": "master",
   "body": "Updated deployment specification with a new image version.",
   "head": "feature-gitea",
   "title": "Updated Solar System Image"

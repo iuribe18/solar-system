@@ -53,20 +53,19 @@ pipeline {
     
     stage('Update Manifest') {
       steps {
-        dir("gitops-argocd/jenkins-demo") {
-          sh 'sed -i "s#siddharth67.*#${IMAGE_REGISTRY}/${IMAGE_REPO}/${NAME}:${VERSION}#g" deployment.yaml'
-          sh 'cat deployment.yaml'
+        dir("gitops-argocd") {
+          sh 'sed -i "s#siddharth67.*#${IMAGE_REGISTRY}/${IMAGE_REPO}/${NAME}:${VERSION}#g" jenkins-demo/deployment.yaml'
+          sh 'cat jenkins-demo/deployment.yaml'
         }
       }
     }
 
     stage('Commit & Push') {
       steps {
-        dir("gitops-argocd/jenkins-demo") {
-          sh "git config --global user.email 'jenkins@ci.com'"
+        dir("gitops-argocd") {
+          sh "git config --global user.email 'bob@controlplane'"
           sh 'git remote set-url origin http://bob:bob%40123@controlplane:3000/bob/gitops-argocd'
           sh 'git checkout feature-gitea'
-          sh 'rm -rf ../jenkins-demo@tmp'
           sh 'git add -A'
           sh 'git commit -am "Updated image version for Build - $VERSION"'
           sh 'git push origin feature-gitea'
