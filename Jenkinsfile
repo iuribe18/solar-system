@@ -6,8 +6,8 @@ pipeline {
     VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
     IMAGE_REPO = "solar-system"
     IMAGE_REGISTRY = "docker-registry"
-    ARGOCD_TOKEN = credentials('argocd-token')
-    GITEA_TOKEN = credentials('gitea-token')
+    ARGOCD_TOKEN = credentials('argocd-cred')
+    GITEA_TOKEN = credentials('gitea-cred')
   }
   
   stages {
