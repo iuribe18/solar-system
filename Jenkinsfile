@@ -44,7 +44,7 @@ pipeline {
 
           } else {
             echo 'Repo does not exists - Cloning the repo'
-            sh 'git clone -b feature-gitea http://controlplane:3000/bob/gitops-argocd'
+            sh 'git clone -b master http://controlplane:3000/bob/gitops-argocd'
           }
         }
       }
@@ -64,10 +64,10 @@ pipeline {
         dir("gitops-argocd/jenkins-demo") {
           sh "git config --global user.email 'jenkins@ci.com'"
           sh 'git remote set-url origin http://$GITEA_TOKEN@controlplane:3000/bob/gitops-argocd'
-          sh 'git checkout feature-gitea'
+          sh 'git checkout master'
           sh 'git add -A'
           sh 'git commit -am "Updated image version for Build - $VERSION"'
-          sh 'git push origin feature-gitea'
+          sh 'git push origin master'
         }
       }
     }
