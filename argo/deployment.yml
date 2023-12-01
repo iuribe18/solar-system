@@ -16,7 +16,7 @@ spec:
         app: solar-system
     spec:
       containers:
-      - image: ivanuribe18/solar-system:v1 
+      - image: ivanuribe18/solar-system:v2
         name: solar-system
         imagePullPolicy: Always
         ports:
